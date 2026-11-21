@@ -1,0 +1,8 @@
+# 统一换行符，避免 Windows 上提交把整套文件变成 CRLF
+* text=auto eol=lf
+
+# Windows 脚本保留 CRLF 更稳妥
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+*.png binary

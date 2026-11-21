@@ -1,0 +1,12 @@
+# 依赖与构建产物
+node_modules/
+dist/
+
+# 测试临时目录（冒烟测试会在源码目录里留下进程资料）
+.smoke/
+*.log
+
+# 系统垃圾
+.DS_Store
+Thumbs.db
+desktop.ini

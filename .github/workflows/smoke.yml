@@ -1,0 +1,31 @@
+name: smoke
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    name: 真实浏览器端到端测试（Edge）
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 环境自检（确认 Edge 存在）
+        shell: pwsh
+        run: |
+          $edge = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+          if (-not (Test-Path $edge)) { throw "找不到 Edge：$edge" }
+          (Get-Item $edge).VersionInfo.ProductVersion
+
+      - name: 扩展：加载未打包扩展并模拟按键截图
+        run: node tools/smoke-extension.mjs
+
+      - name: 油猴脚本：注入脚本并模拟按键截图
+        run: node tools/smoke-userscript.mjs

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>B站快捷截图 · 设置</title>
+    <style>
+      :root {
+        --pink: #fb7299;
+        --pink-dark: #e05c82;
+        --blue: #00a1d6;
+        --bg: #f6f7f9;
+        --card: #ffffff;
+        --text: #1f2329;
+        --muted: #7a828e;
+        --line: #e6e8eb;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 32px 20px 64px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      .wrap { max-width: 760px; margin: 0 auto; }
+      .hd { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+      .hd img { width: 44px; height: 44px; border-radius: 11px; }
+      .hd h1 { margin: 0; font-size: 20px; letter-spacing: .2px; }
+      .hd .sub { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+      .ver { margin-left: auto; color: var(--muted); font-size: 12px; }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 18px 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, .04);
+      }
+      .card h2 {
+        margin: 0 0 14px;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card h2::before {
+        content: "";
+        width: 4px; height: 15px; border-radius: 2px;
+        background: var(--pink);
+      }
+
+      .row {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 10px 0;
+        border-top: 1px dashed var(--line);
+      }
+      .row:first-of-type { border-top: 0; padding-top: 0; }
+      .lbl { flex: 0 0 132px; padding-top: 6px; color: #3b4149; font-weight: 500; }
+      .ctrl { flex: 1 1 auto; min-width: 0; }
+      .hint { margin: 6px 0 0; color: var(--muted); font-size: 12px; }
+
+      select, input[type="text"], input[type="number"] {
+        font: inherit;
+        padding: 7px 10px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #fff;
+        color: inherit;
+        min-width: 0;
+        max-width: 100%;
+      }
+      input[type="text"] { width: 100%; }
+      select:focus, input:focus, button:focus-visible {
+        outline: 2px solid rgba(0, 161, 214, .4);
+        outline-offset: 1px;
+        border-color: var(--blue);
+      }
+      input[type="number"] { width: 96px; }
+
+      .key-btn {
+        font: inherit;
+        min-width: 168px;
+        padding: 8px 14px;
+        border-radius: 9px;
+        border: 1px dashed #c9ced6;
+        background: #fbfcfd;
+        color: var(--text);
+        cursor: pointer;
+        transition: .15s;
+      }
+      .key-btn:hover { border-color: var(--pink); color: var(--pink-dark); }
+      .key-btn.recording {
+        border-style: solid;
+        border-color: var(--pink);
+        background: #fff1f5;
+        color: var(--pink-dark);
+      }
+      kbd {
+        display: inline-block;
+        padding: 1px 7px;
+        border-radius: 5px;
+        border: 1px solid #d7dbe0;
+        border-bottom-width: 2px;
+        background: #fff;
+        font-family: ui-monospace, Consolas, monospace;
+        font-size: 12px;
+      }
+
+      .choices { display: flex; flex-wrap: wrap; gap: 8px; }
+      .choice {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        cursor: pointer;
+        background: #fff;
+        transition: .15s;
+        font-size: 13px;
+      }
+      .choice:hover { border-color: #c9ced6; }
+      .choice input { accent-color: var(--pink); margin: 0; }
+      .choice:has(input:checked) {
+        border-color: var(--pink);
+        background: #fff6f9;
+        color: var(--pink-dark);
+        font-weight: 500;
+      }
+
+      table.keys { border-collapse: collapse; width: 100%; margin: 4px 0 12px; }
+      table.keys th, table.keys td {
+        text-align: left;
+        padding: 7px 10px;
+        border-bottom: 1px solid var(--line);
+        font-size: 13px;
+      }
+      table.keys th { color: var(--muted); font-weight: 500; }
+
+      .tokens { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+      .token {
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: #f2f4f7;
+        border: 1px solid var(--line);
+        color: #4a5058;
+        cursor: pointer;
+        font-family: ui-monospace, Consolas, monospace;
+      }
+      .token:hover { border-color: var(--pink); color: var(--pink-dark); }
+      .preview {
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--muted);
+        word-break: break-all;
+      }
+      .preview b { color: var(--blue); font-weight: 600; }
+
+      .switch { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+      .switch input { width: 17px; height: 17px; accent-color: var(--pink); }
+
+      .footer-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 18px;
+      }
+      .btn {
+        font: inherit;
+        padding: 8px 16px;
+        border-radius: 9px;
+        border: 1px solid var(--line);
+        background: #fff;
+        cursor: pointer;
+        transition: .15s;
+      }
+      .btn:hover { border-color: #c9ced6; background: #fbfcfd; }
+      .btn--pink {
+        background: var(--pink);
+        border-color: var(--pink);
+        color: #fff;
+      }
+      .btn--pink:hover { background: var(--pink-dark); border-color: var(--pink-dark); }
+      .save-state { color: var(--muted); font-size: 12px; }
+      .save-state.ok { color: #149a4f; }
+
+      .note {
+        background: #f0f8ff;
+        border: 1px solid #cfe9f8;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 13px;
+        color: #2b5c74;
+      }
+      .note b { color: #17607f; }
+      .danger-note {
+        background: #fff8f0;
+        border-color: #f7e0c4;
+        color: #7a5220;
+      }
+      .foot { text-align: center; color: var(--muted); font-size: 12px; margin-top: 24px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="hd">
+        <img src="icons/icon48.png" alt="BiliShot" />
+        <div>
+          <h1>B站快捷截图 · BiliShot</h1>
+          <p class="sub">在哔哩哔哩页面按 <kbd>Insert</kbd> 一键截图，自动复制到剪贴板或保存文件</p>
+        </div>
+        <span class="ver">v1.0.0</span>
+      </header>
+
+      <section class="card">
+        <h2>快捷键</h2>
+
+        <div class="row">
+          <span class="lbl">基础按键</span>
+          <div class="ctrl">
+            <button id="keyRecorder" class="key-btn" type="button">Insert</button>
+            <p class="hint">点击后按下你想用的键（推荐 Insert / F8 / F9）。按 Esc 取消录制。</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <span class="lbl">三种截图方式</span>
+          <div class="ctrl">
+            <table class="keys">
+              <tr><th style="width: 40%">按键组合</th><th>效果</th></tr>
+              <tr><td><kbd id="kbdBase">Insert</kbd></td><td>默认模式（见下方「默认截图范围」）</td></tr>
+              <tr><td><kbd>Shift</kbd> + <kbd id="kbdShift">Insert</kbd></td><td>只截视频画面（自动去掉弹幕区以外的网页界面）</td></tr>
+              <tr><td><kbd>Alt</kbd> + <kbd id="kbdAlt">Insert</kbd></td><td>拖拽框选任意区域</td></tr>
+            </table>
+            <p class="hint">在播放器全屏（按 F 或 双击）时同样可用。输入框 / 评论框里打字时不会误触发。</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <span class="lbl">默认截图范围</span>
+          <div class="ctrl">
+            <select id="defaultMode">
+              <option value="view">整页可见区域</option>
+              <option value="video">仅视频画面</option>
+              <option value="region">框选区域</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <span class="lbl">输入框内不触发</span>
+          <div class="ctrl">
+            <label class="switch"><input type="checkbox" id="skipWhenTyping" /> 焦点在输入框时不响应快捷键</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <span class="lbl">启用插件</span>
+          <div class="ctrl">
+            <label class="switch"><input type="checkbox" id="enabled" /> 在 B站 页面启用 Ins 键截图</label>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>保存方式</h2>
+
+        <div class="row">
+          <span class="lbl">截图后</span>
+          <div class="ctrl">
+            <div class="choices" id="saveActionGroup">
+              <label class="choice"><input type="radio" name="saveAction" value="clipboard" />复制到剪贴板</label>
+              <label class="choice"><input type="radio" name="saveAction" value="download" />保存到下载目录</label>
+              <label class="choice"><input type="radio" name="saveAction" value="both" />两者都要</label>
+            </div>
+            <p class="hint">复制到剪贴板后，可以直接在 QQ / 微信 / 文档里 <kbd>Ctrl</kbd>+<kbd>V</kbd> 粘贴。</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <span class="lbl">图片格式</span>
+          <div class="ctrl">
+            <div class="choices">
+              <label class="choice"><input type="radio" name="format" value="png" />PNG（无损，推荐）</label>
+              <label class="choice"><input type="radio" name="format" value="jpeg" />JPEG（体积小）</label>
+            </div>
+            <p class="hint" id="qualityWrap" hidden>
+              JPEG 质量：<input type="range" id="jpegQuality" min="40" max="100" step="1" />
+              <span id="qualityValue">92%</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="row">
+          <span class="lbl">文件名模板</span>
+          <div class="ctrl">
+            <input type="text" id="filenameTemplate" spellcheck="false" />
+            <div class="tokens" id="tokenList"></div>
+            <p class="preview" id="filenamePreview"></p>
+          </div>
+        </div>
+
+        <div class="row">
+          <span class="lbl">保存子目录</span>
+          <div class="ctrl">
+            <input type="text" id="downloadSubfolder" spellcheck="false" />
+            <p class="hint">相对「下载」文件夹的子目录，留空则直接存到下载目录。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>截图后提示</h2>
+
+        <div class="row">
+          <span class="lbl">显示预览卡片</span>
+          <div class="ctrl">
+            <label class="switch"><input type="checkbox" id="showPreview" /> 在页面右下角显示截图预览（可直接复制 / 另存）</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <span class="lbl">预览停留时长</span>
+          <div class="ctrl">
+            <input type="number" id="previewSeconds" min="0" max="60" step="1" /> 秒
+            <p class="hint">填 0 表示不自动关闭。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>说明</h2>
+        <div class="note">
+          <b>为什么要在 B站 页面上按？</b> 插件只在 <kbd>bilibili.com</kbd> 页面注入快捷键脚本；网页截图需要浏览器授权，
+          在 B站 页面按 Ins 是最省事的方式。如果在别的网站也想截图，可以用备用快捷键
+          <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd>（可在 <b>chrome://extensions/shortcuts</b> 里改成你喜欢的组合）。
+        </div>
+        <div class="note danger-note" style="margin-top: 10px">
+          <b>兼容性提示：</b> 纯软件渲染的播放器（极少数「硬解 + 受保护内容」场景）可能截出黑屏，这属于浏览器 DRM 限制，
+          换个播放器模式或关闭硬解即可。
+        </div>
+      </section>
+
+      <div class="footer-bar">
+        <button class="btn btn--pink" id="resetBtn" type="button">恢复默认设置</button>
+        <span class="save-state" id="saveState">修改会自动保存</span>
+      </div>
+
+      <p class="foot">BiliShot · 本地运行，不上传任何截图数据</p>
+    </div>
+
+    <script src="options.js"></script>
+  </body>
+</html>
